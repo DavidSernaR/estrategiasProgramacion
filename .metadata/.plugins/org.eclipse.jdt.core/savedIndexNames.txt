@@ -1,0 +1,4 @@
+INDEX VERSION 1.134+C:\estrategiasProgramacion\ws_estrategiasProgramacion\.metadata\.plugins\org.eclipse.jdt.core
+1865797976.index
+1481314228.index
+3803894794.index

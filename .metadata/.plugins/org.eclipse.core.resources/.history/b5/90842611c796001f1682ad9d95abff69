@@ -1,0 +1,22 @@
+package algoritmosVoraces;
+
+class Item {
+	int cantidad;
+	double peso;
+	double valor;
+
+	public Item(int cantidad, double peso, double valor) {
+		this.cantidad = cantidad;
+		this.peso = peso;
+		this.valor = valor;
+	}
+}
+
+public class Ejercicio23 {
+
+	public static void main(String[] args) {
+		Item[] items = { new Item(3, 210, 15), new Item(2, 230, 50), new Item(4, 150, 20), new Item(5, 40, 55),
+				new Item(3, 80, 92) };
+	}
+
+}

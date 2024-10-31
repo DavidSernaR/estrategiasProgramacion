@@ -1,0 +1,76 @@
+package algoritmosVoraces;
+
+public class Ejercicio22 {
+
+    // Arreglo que contiene las denominaciones de billetes disponibles
+    public static int[] denominacion = { 10000, 20000, 50000, 100000 };
+    
+    // Arreglo que contiene la cantidad disponible de cada denominación de billete
+    public static int[] cantidadDenominacion = { 300, 200, 100, 50 };
+
+    public static void main(String[] args) {
+        // Llamada al método entregarBilletes con un monto de 2,000,000
+        int[] cantidadEntregada = entregarBilletes(2000000);
+        
+        // Verificación del resultado devuelto por entregarBilletes
+        if (cantidadEntregada != null) {
+            // Imprimir la cantidad de billetes entregados por cada denominación
+            for (int i = 0; i < cantidadEntregada.length; i++) {
+                System.out.println("La cantidad de billetes de " + denominacion[i] + " entregados fueron: "
+                        + cantidadEntregada[i]);
+            }
+            // Imprimir la cantidad de billetes restantes de cada denominación
+            for (int i = 0; i < cantidadDenominacion.length; i++) {
+                System.out.println(
+                        "La cantidad de billetes restantes de " + denominacion[i] + ": " + cantidadDenominacion[i]);
+            }
+        } else {
+            System.out.println("El dinero solo se puede entregar en cantidades divisibles por 10000");
+        }
+    }
+
+    /**
+     * Método que entrega la cantidad de billetes para un monto específico.
+     * 
+     * @param cantidadBilletes La cantidad total de dinero que se desea entregar.
+     * @return Un arreglo con la cantidad de billetes entregados de cada denominación, o null si no es posible entregar la cantidad.
+     *
+     * Complejidad computacional:
+     * - Tiempo: O(n), donde n es el número de denominaciones disponibles.
+     * - Espacio: O(n) debido al arreglo dineroEntregado que almacena la cantidad de billetes entregados.
+     */
+    public static int[] entregarBilletes(int cantidadBilletes) {
+        // Arreglo que guarda la cantidad de billetes entregados
+        int[] dineroEntregado = new int[denominacion.length];
+        
+        // Verificar si la cantidad de billetes es divisible por 10,000
+        if (cantidadBilletes % 10000 == 0) {
+            // Iterar sobre cada denominación de billete
+            for (int i = 0; i < denominacion.length; i++) {
+                // Calcular la cantidad necesaria de billetes de esta denominación
+                int cantidadNecesaria = cantidadBilletes / denominacion[i];
+                
+                // Ajustar si no hay suficientes billetes disponibles
+                if (cantidadNecesaria > cantidadDenominacion[i]) {
+                    cantidadNecesaria = cantidadDenominacion[i];
+                }
+                
+                // Reducir la cantidad de dinero restante
+                cantidadBilletes -= cantidadNecesaria * denominacion[i];
+                // Actualizar la cantidad de billetes restantes
+                cantidadDenominacion[i] -= cantidadNecesaria;
+                // Guardar la cantidad de billetes entregados
+                dineroEntregado[i] = cantidadNecesaria;
+            }
+            // Si aún queda dinero que no se puede entregar, retornar null
+            if (cantidadBilletes > 0) {
+                return null;
+            }
+            // Retornar la cantidad de billetes entregados
+            return dineroEntregado;
+        } else {
+            // Si la cantidad no es divisible por 10,000, retornar null
+            return null;
+        }
+    }
+}

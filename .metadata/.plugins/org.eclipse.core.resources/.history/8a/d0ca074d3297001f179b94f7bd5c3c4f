@@ -1,0 +1,20 @@
+package divideYVenceras;
+
+public class Ejercicio1 {
+
+	public static void main(String[] args) {
+		int[] arr = { 8, 4, 12, 23, 89, 2, 7, 6 };
+		System.out.println(sumaTotalDivisionRecursiva(arr, 0, arr.length - 1));
+	}
+	
+	public static int sumaTotalDivisionRecursiva(int[] arr, int indMenor, int indMayor) {
+		if (indMenor == indMayor) {
+			return arr[indMenor];
+		}
+		int mitad = indMenor + (indMayor - indMenor + 1) / 2;
+		int mitadIzq = sumaTotalDivisionRecursiva(arr, indMenor, mitad - 1);
+		int mitadDer = sumaTotalDivisionRecursiva(arr, mitad, indMayor);
+		int suma = mitadIzq + mitadDer;
+		return suma;
+	}
+}

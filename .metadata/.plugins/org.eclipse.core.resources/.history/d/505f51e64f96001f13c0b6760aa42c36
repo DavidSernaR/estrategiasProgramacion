@@ -1,0 +1,28 @@
+package divideYVenceras;
+
+public class Ejercicio1 {
+
+	public static void main(String[] args) {
+		int[] arr = { 8, 4, 12, 23, 89, 2, 7, 6 };
+		System.out.println(sumaTotalDivisionRecursiva(arr, 0, arr.length - 1));
+	}
+
+	/*
+	 * Calcula la suma total de los elementos de un arreglo de enteros utilizando el
+	 * enfoque de Divide y Vencerás. Aunque la función utiliza recursión para
+	 * dividir el arreglo, su complejidad temporal es O(n) porque cada elemento del
+	 * arreglo se accede y suma exactamente una vez en el proceso de acumulación.
+	 * Esto contrasta con una búsqueda binaria, que tiene complejidad O(log2(n)) al
+	 * explorar solo una parte del arreglo en cada llamada recursiva.
+	 */
+	public static int sumaTotalDivisionRecursiva(int[] arr, int indMenor, int indMayor) {
+		if (indMenor == indMayor) {
+			return arr[indMenor];
+		}
+		int mitad = indMenor + (indMayor - indMenor + 1) / 2;
+		int mitadIzq = sumaTotalDivisionRecursiva(arr, indMenor, mitad - 1);
+		int mitadDer = sumaTotalDivisionRecursiva(arr, mitad, indMayor);
+		int suma = mitadIzq + mitadDer;
+		return suma;
+	}
+}

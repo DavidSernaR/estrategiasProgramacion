@@ -1,0 +1,26 @@
+package divideYVenceras;
+
+public class Ejercicio1 {
+
+	public static void main(String[] args) {
+		int[] arr = {8, 4, 12, 23, 89, 2, 7, 6};
+		System.out.println(sumaTotalDivisionRecursiva(arr, 0, arr.length-1));
+	}
+
+	/*
+	 * Divide y vencerás: Implementar una función que, dada una lista de números
+	 * enteros, calcule la suma total de sus elementos mediante la división
+	 * recursiva del arreglo.
+	 */
+	public static int sumaTotalDivisionRecursiva(int[] arr, int indMenor, int indMayor) {
+		if (indMenor == indMayor) {
+			return arr[indMenor];
+		}
+		// int size = (indMenor + (indMayor+1))/2;
+		int size = indMenor + (indMayor - indMenor + 1) / 2;
+		int mitadIzq = sumaTotalDivisionRecursiva(arr, indMenor, size-1);
+		int mitadDer = sumaTotalDivisionRecursiva(arr, size, indMayor);
+		int suma = mitadIzq + mitadDer;
+		return suma;
+	}
+}

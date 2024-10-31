@@ -1,0 +1,78 @@
+package algoritmosVoraces;
+
+class Item {
+	int cantidad;
+	double peso;
+	double valor;
+
+	public Item(int cantidad, double peso, double valor) {
+		this.cantidad = cantidad;
+		this.peso = peso;
+		this.valor = valor;
+	}
+
+	public int getCantidad() {
+		return cantidad;
+	}
+
+	public void setCantidad(int cantidad) {
+		this.cantidad = cantidad;
+	}
+
+	public double getPeso() {
+		return peso;
+	}
+
+	public void setPeso(double peso) {
+		this.peso = peso;
+	}
+
+	public double getValor() {
+		return valor;
+	}
+
+	public void setValor(double valor) {
+		this.valor = valor;
+	}
+}
+
+public class Ejercicio23 {
+
+	public static void main(String[] args) {
+		Item[] items = { new Item(3, 210, 15), new Item(2, 230, 50), new Item(4, 150, 20), new Item(5, 40, 55),
+				new Item(3, 80, 92) };
+		double capacidad = 520;
+		System.out.println(mochilaFraccionaria(items, capacidad));
+	}
+
+	public static double mochilaFraccionaria(Item[] items, double capacidad) {
+		for (int i = 0; i < items.length - 1; i++) {
+			for (int j = 0; j < items.length - i - 1; j++) {
+				double valorItemActual = items[j].getValor() / items[j].getPeso();
+				double valorItemSiguiente = items[j + 1].getValor() / items[j + 1].getPeso();
+				if (valorItemActual > valorItemSiguiente) {
+					Item itemActual = items[j];
+					items[j] = items[j + 1];
+					items[j + 1] = itemActual;
+				}
+			}
+		}
+		double valorTotal = 0;
+		double espacioDisponible = capacidad;
+		for (int i = 0; i < items.length; i++) {
+			while (items[i].getCantidad() > 0 && espacioDisponible > 0) {
+				if (items[i].getPeso() <= espacioDisponible) {
+					valorTotal += items[i].getValor();
+					espacioDisponible -= items[i].getPeso();
+					items[i].setCantidad(items[i].getCantidad() - 1);
+				} else {
+					valorTotal += (espacioDisponible / items[i].getPeso()) * items[i].getValor();
+					espacioDisponible -= (espacioDisponible / items[i].getPeso()) * items[i].getPeso();
+					items[i].setCantidad(items[i].getCantidad() - 1);
+				}
+			}
+		}
+		return valorTotal;
+	}
+
+}

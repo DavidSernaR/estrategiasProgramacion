@@ -1,0 +1,19 @@
+package algoritmosVoraces;
+
+class Arista {
+	int origen, destino, peso;
+
+	public Arista(int origen, int destino, int peso) {
+		this.origen = origen;
+		this.destino = destino;
+		this.peso = peso;
+	}
+}
+
+public class Ejercicio25 {
+
+	public static void main(String[] args) {
+		
+	}
+
+}

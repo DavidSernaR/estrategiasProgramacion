@@ -1,0 +1,46 @@
+package algoritmosVoraces;
+
+public class Ejercicio22 {
+
+	public static int[] denominacion = { 10000, 20000, 50000, 100000 };
+	public static int[] cantidadDenominacion = { 300, 200, 100, 50 };
+
+	public static void main(String[] args) {
+		int[] cantidadEntregada = entregarBilletes(2000000);
+		if (cantidadEntregada != null) {
+			for (int i = 0; i < cantidadEntregada.length; i++) {
+				System.out.println("La cantidad de billetes de " + denominacion[i] + " entregados fueron: "
+						+ cantidadEntregada[i]);
+			}
+			for (int i = 0; i < cantidadDenominacion.length; i++) {
+				System.out.println(
+						"La cantidad de billetes restantes de " + denominacion[i] + ": " + cantidadDenominacion[i]);
+			}z
+		} else {
+			System.out.println("El dinero solo se puede entregar en cantidades divisibles por 10000");
+		}
+
+	}
+
+	public static int[] entregarBilletes(int cantidadBilletes) {
+		int[] dineroEntregado = new int[denominacion.length];
+		if (cantidadBilletes % 10000 == 0) {
+			for (int i = 0; i < denominacion.length; i++) {
+				int cantidadNecesaria = cantidadBilletes / denominacion[i];
+				if (cantidadNecesaria > cantidadDenominacion[i]) {
+					cantidadNecesaria = cantidadDenominacion[i];
+				}
+				cantidadBilletes -= cantidadNecesaria * denominacion[i];
+				cantidadDenominacion[i] -= cantidadNecesaria;
+				dineroEntregado[i] = cantidadNecesaria;
+			}
+			if (cantidadBilletes > 0) {
+				return null;
+			}
+			return dineroEntregado;
+		} else {
+			return null;
+		}
+	}
+
+}

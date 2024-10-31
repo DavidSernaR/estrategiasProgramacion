@@ -1,0 +1,46 @@
+package algoritmosVoraces;
+
+public class Ejercicio22 {
+
+	public static int[] denominacion = { 10000, 20000, 50000, 100000 };
+	public static int[] cantidadDenominacion = { 300, 200, 100, 50 };
+
+	public static void main(String[] args) {
+		int cantidadSolicitada = 2000000;
+		int[] cantidadEntregada = entregarBilletes(cantidadSolicitada);
+
+		if (cantidadEntregada != null) {
+			System.out.println("Cantidad solicitada: " + cantidadSolicitada);
+			for (int i = 0; i < cantidadEntregada.length; i++) {
+				System.out.println("Billetes de " + denominacion[i] + " entregados: " + cantidadEntregada[i]);
+			}
+		} else {
+			System.out.println("No es posible entregar el monto solicitado en las denominaciones disponibles.");
+		}
+
+		System.out.println("\nBilletes restantes en el cajero:");
+		for (int i = 0; i < cantidadDenominacion.length; i++) {
+			System.out.println("Denominación de " + denominacion[i] + ": " + cantidadDenominacion[i] + " billetes");
+		}
+	}
+
+	public static int[] entregarBilletes(int cantidadSolicitada) {
+		int[] billetesEntregados = new int[denominacion.length];
+
+		if (cantidadSolicitada % 10000 != 0) {
+			return null;
+		}
+
+		for (int i = 0; i < denominacion.length; i++) {
+			int billetesNecesarios = cantidadSolicitada / denominacion[i];
+			if (billetesNecesarios > cantidadDenominacion[i]) {
+				billetesNecesarios = cantidadDenominacion[i];
+			}
+			cantidadSolicitada -= billetesNecesarios * denominacion[i];
+			cantidadDenominacion[i] -= billetesNecesarios;
+			billetesEntregados[i] = billetesNecesarios;
+		}
+
+		return (cantidadSolicitada == 0) ? billetesEntregados : null;
+	}
+}
