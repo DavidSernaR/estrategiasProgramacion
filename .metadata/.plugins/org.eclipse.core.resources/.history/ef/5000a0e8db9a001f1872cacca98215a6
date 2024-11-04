@@ -1,0 +1,223 @@
+package algoritmosVoraces;
+
+/**
+ * La clase Objeto representa un ítem que tiene una cantidad, un peso y un valor.
+ * Se utiliza en el contexto de la resolución del problema de la mochila.
+ */
+class Objeto {
+    int cantidad;  // Cantidad disponible del objeto.
+    double peso;   // Peso del objeto.
+    double valor;  // Valor del objeto.
+
+    /**
+     * Constructor para crear un nuevo objeto.
+     *
+     * @param cantidad La cantidad de este objeto.
+     * @param peso     El peso de este objeto.
+     * @param valor    El valor de este objeto.
+     */
+    public Objeto(int cantidad, double peso, double valor) {
+        this.cantidad = cantidad;
+        this.peso = peso;
+        this.valor = valor;
+    }
+
+    // Métodos de acceso (getters y setters)
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public double getPeso() {
+        return peso;
+    }
+
+    public void setPeso(double peso) {
+        this.peso = peso;
+    }
+
+    public double getValor() {
+        return valor;
+    }
+
+    public void setValor(double valor) {
+        this.valor = valor;
+    }
+
+    @Override
+    public String toString() {
+        return "Objeto{" +
+                "cantidad=" + cantidad +
+                ", peso=" + peso +
+                ", valor=" + valor +
+                '}';
+    }
+}
+
+/**
+ * La clase Ejercicio23 resuelve el problema de la mochila mediante 
+ * diferentes criterios: valor total, peso y valor por unidad de peso.
+ */
+public class Ejercicio23 {
+
+    /**
+     * Método principal que se ejecuta al iniciar la aplicación.
+     * Define los objetos y la capacidad de la mochila, y llama a los
+     * métodos para agregar objetos según diferentes criterios.
+     *
+     * @param args Argumentos de línea de comandos (no se utilizan en este ejemplo).
+     */
+    public static void main(String[] args) {
+        Objeto o1 = new Objeto(3, 210, 15);
+        Objeto o2 = new Objeto(2, 230, 50);
+        Objeto o3 = new Objeto(4, 150, 20);
+        Objeto o4 = new Objeto(1, 40, 55);
+        Objeto o5 = new Objeto(2, 250, 40);
+
+        Objeto[] objetos = { o1, o2, o3, o4, o5 };
+        int pesoMaximo = 500;
+
+        System.out.println("Agregar objetos por valor total:");
+        Objeto[] mochila1 = agregarContainerMaxValor(objetos, pesoMaximo);
+        for (Objeto objeto : mochila1) {
+            if (objeto != null) {
+                System.out.println(objeto);
+            }
+        }
+
+        System.out.println("\nAgregar objetos por peso:");
+        Objeto[] mochila2 = agregarContainerMinPeso(objetos, pesoMaximo);
+        for (Objeto objeto : mochila2) {
+            if (objeto != null) {
+                System.out.println(objeto);
+            }
+        }
+
+        System.out.println("\nAgregar objetos por valor unidad de peso:");
+        Objeto[] mochila3 = agregarContainerValorUnidadPeso(objetos, pesoMaximo);
+        for (Objeto objeto : mochila3) {
+            if (objeto != null) {
+                System.out.println(objeto);
+            }
+        }
+    }
+
+    /**
+     * Agrega objetos a la mochila priorizando el valor total.
+     *
+     * @param objetos    Arreglo de objetos disponibles.
+     * @param pesoMaximo Capacidad máxima de la mochila.
+     * @return Un arreglo de objetos que representan la mochila.
+     */
+    public static Objeto[] agregarContainerMaxValor(Objeto[] objetos, int pesoMaximo) {
+        // Ordenar objetos por valor en orden descendente (burbuja)
+        for (int i = 0; i < objetos.length - 1; i++) {
+            for (int j = 0; j < objetos.length - i - 1; j++) {
+                if (objetos[j].getValor() < objetos[j + 1].getValor()) {
+                    // Intercambiar objetos si están en el orden incorrecto.
+                    Objeto temp = objetos[j];
+                    objetos[j] = objetos[j + 1];
+                    objetos[j + 1] = temp;
+                }
+            }
+        }
+
+        Objeto[] mochila = new Objeto[objetos.length];
+        int pesoActual = 0; // Peso acumulado en la mochila
+        int index = 0; // Índice para la mochila
+
+        for (Objeto objeto : objetos) {
+            while (objeto.getCantidad() > 0 && pesoActual + objeto.getPeso() <= pesoMaximo) {
+                mochila[index++] = objeto;
+                pesoActual += objeto.getPeso();
+                objeto.setCantidad(objeto.getCantidad() - 1);
+            }
+        }
+
+        return mochila;
+    }
+
+    /**
+     * Agrega objetos a la mochila priorizando el peso.
+     *
+     * @param objetos    Arreglo de objetos disponibles.
+     * @param pesoMaximo Capacidad máxima de la mochila.
+     * @return Un arreglo de objetos que representan la mochila.
+     */
+    public static Objeto[] agregarContainerMinPeso(Objeto[] objetos, int pesoMaximo) {
+        // Ordenar objetos por peso en orden ascendente (burbuja)
+        for (int i = 0; i < objetos.length - 1; i++) {
+            for (int j = 0; j < objetos.length - i - 1; j++) {
+                if (objetos[j].getPeso() > objetos[j + 1].getPeso()) {
+                    // Intercambiar objetos si están en el orden incorrecto.
+                    Objeto temp = objetos[j];
+                    objetos[j] = objetos[j + 1];
+                    objetos[j + 1] = temp;
+                }
+            }
+        }
+
+        Objeto[] mochila = new Objeto[objetos.length];
+        int pesoActual = 0; // Peso acumulado en la mochila
+        int index = 0; // Índice para la mochila
+
+        for (Objeto objeto : objetos) {
+            while (objeto.getCantidad() > 0 && pesoActual + objeto.getPeso() <= pesoMaximo) {
+                mochila[index++] = objeto;
+                pesoActual += objeto.getPeso();
+                objeto.setCantidad(objeto.getCantidad() - 1);
+            }
+        }
+
+        return mochila;
+    }
+
+    /**
+     * Agrega objetos a la mochila priorizando el valor por unidad de peso.
+     *
+     * @param objetos    Arreglo de objetos disponibles.
+     * @param pesoMaximo Capacidad máxima de la mochila.
+     * @return Un arreglo de objetos que representan la mochila.
+     */
+    public static Objeto[] agregarContainerValorUnidadPeso(Objeto[] objetos, int pesoMaximo) {
+        // Ordenar objetos por valor unidad de peso en orden descendente (burbuja)
+        for (int i = 0; i < objetos.length - 1; i++) {
+            for (int j = 0; j < objetos.length - i - 1; j++) {
+                double valorUnidadPesoActual = objetos[j].getValor() / objetos[j].getPeso();
+                double valorUnidadPesoSiguiente = objetos[j + 1].getValor() / objetos[j + 1].getPeso();
+                if (valorUnidadPesoActual < valorUnidadPesoSiguiente) {
+                    // Intercambiar objetos si están en el orden incorrecto.
+                    Objeto temp = objetos[j];
+                    objetos[j] = objetos[j + 1];
+                    objetos[j + 1] = temp;
+                }
+            }
+        }
+
+        Objeto[] mochila = new Objeto[objetos.length];
+        int pesoActual = 0; // Peso acumulado en la mochila
+        int index = 0; // Índice para la mochila
+
+        for (Objeto objeto : objetos) {
+            while (objeto.getCantidad() > 0 && pesoActual + objeto.getPeso() <= pesoMaximo) {
+                mochila[index++] = objeto;
+                pesoActual += objeto.getPeso();
+                objeto.setCantidad(objeto.getCantidad() - 1);
+            }
+        }
+
+        return mochila;
+    }
+}
+
+/**
+ * Complejidad Temporal:
+ * La complejidad temporal de este algoritmo es O(n^2) para cada uno de los métodos
+ * debido al uso del algoritmo de ordenamiento burbuja. Esto se debe a que en cada método
+ * se recorre el arreglo de objetos y se realizan intercambios en caso de que el orden
+ * no sea el correcto. La selección de objetos para la mochila es lineal O(n), 
+ * pero es dominada por la parte de ordenamiento, por lo que se puede resumir como O(n^2).
+ */

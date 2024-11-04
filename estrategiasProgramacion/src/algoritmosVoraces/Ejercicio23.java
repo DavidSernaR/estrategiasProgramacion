@@ -1,29 +1,43 @@
 package algoritmosVoraces;
 
 /**
- * La clase Item representa un objeto que tiene una cantidad, un peso y un
- * valor. Se utiliza en el contexto de la resolución del problema de la mochila
- * fraccionaria.
+ * Clase que representa un objeto que puede ser incluido en la mochila.
  */
-class Item {
-	int cantidad; // Cantidad disponible del ítem.
-	double peso; // Peso del ítem.
-	double valor; // Valor del ítem.
+class Objeto {
+	private static int generadorId = 1; // Generador de identificadores únicos
+	public int id; // Identificador del objeto
+	public int cantidad; // Cantidad de unidades del objeto
+	public int peso; // Peso del objeto
+	public int valor; // Valor del objeto
 
 	/**
-	 * Constructor para crear un nuevo ítem.
-	 *
-	 * @param cantidad La cantidad de este ítem.
-	 * @param peso     El peso de este ítem.
-	 * @param valor    El valor de este ítem.
+	 * Constructor que inicializa un objeto con cantidad, peso y valor.
+	 * 
+	 * @param cantidad Cantidad de unidades del objeto.
+	 * @param peso     Peso del objeto.
+	 * @param valor    Valor del objeto.
 	 */
-	public Item(int cantidad, double peso, double valor) {
+	public Objeto(int cantidad, int peso, int valor) {
+		this.id = generadorId++;
 		this.cantidad = cantidad;
 		this.peso = peso;
 		this.valor = valor;
 	}
 
-	// Métodos de acceso (getters y setters)
+	// Constructor por defecto
+	public Objeto() {
+		this.id = generadorId++;
+	}
+
+	// Métodos getter y setter para los atributos
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public int getCantidad() {
 		return cantidad;
 	}
@@ -32,87 +46,223 @@ class Item {
 		this.cantidad = cantidad;
 	}
 
-	public double getPeso() {
+	public int getPeso() {
 		return peso;
 	}
 
-	public void setPeso(double peso) {
+	public void setPeso(int peso) {
 		this.peso = peso;
 	}
 
-	public double getValor() {
+	public int getValor() {
 		return valor;
 	}
 
-	public void setValor(double valor) {
+	public void setValor(int valor) {
 		this.valor = valor;
+	}
+
+	@Override
+	public String toString() {
+		return "Objeto [id=" + id + ", cantidad=" + cantidad + ", peso=" + peso + ", valor=" + valor + "]";
 	}
 }
 
 /**
- * La clase Ejercicio23 resuelve el problema de la mochila fraccionaria, que
- * consiste en maximizar el valor total de los ítems que se pueden transportar
- * en una mochila con capacidad limitada.
+ * Clase que contiene los métodos para resolver el problema de la mochila.
  */
 public class Ejercicio23 {
 
 	/**
-	 * Método principal que se ejecuta al iniciar la aplicación. Define los ítems y
-	 * la capacidad de la mochila, y llama al método mochilaFraccionaria para
-	 * calcular el valor máximo que se puede obtener con los ítems disponibles.
-	 *
-	 * @param args Argumentos de línea de comandos (no se utilizan en este ejemplo).
+	 * Selecciona los objetos de mayor valor total hasta alcanzar el peso máximo
+	 * permitido.
+	 * 
+	 * @param objetos    Arreglo de objetos disponibles.
+	 * @param pesoMaximo Peso máximo que puede soportar la mochila.
+	 * @return Arreglo de objetos seleccionados en la mochila.
+	 * 
+	 *         Complejidad: O(n^2), debido al algoritmo de ordenación (burbuja).
 	 */
-	public static void main(String[] args) {
-		Item[] items = { new Item(3, 210, 15), new Item(2, 230, 50), new Item(4, 150, 20), new Item(5, 40, 55),
-				new Item(3, 80, 92) };
-		double capacidad = 520; // Capacidad de la mochila.
-		System.out.println(mochilaFraccionaria(items, capacidad)); // Imprime el valor máximo.
+	public static Objeto[] agregarContainerMaxValor(Objeto[] objetos, int pesoMaximo) {
+		Objeto[] mochila = new Objeto[objetos.length]; // Array para almacenar los objetos seleccionados
+		int valorTotal = 0; // Variable para almacenar el valor total de los objetos seleccionados
+
+		// Ordenar los objetos por valor (burbuja)
+		for (int i = 0; i < objetos.length - 1; i++) {
+			for (int j = 0; j < objetos.length - i - 1; j++) {
+				if (objetos[j].getValor() < objetos[j + 1].getValor()) {
+					Objeto temp = objetos[j]; // Intercambio de objetos para ordenar
+					objetos[j] = objetos[j + 1];
+					objetos[j + 1] = temp;
+				}
+			}
+		}
+
+		// Seleccionar objetos hasta alcanzar el peso máximo
+		for (int i = 0; i < objetos.length && pesoMaximo > 0; i++) {
+			if (objetos[i].getPeso() > pesoMaximo) {
+				double fraccion = (double) pesoMaximo / objetos[i].getPeso(); // Calcular la fracción del objeto que se
+																				// puede añadir
+				int valorFraccionado = (int) (objetos[i].getValor() * fraccion); // Calcular el valor de la fracción del
+																					// objeto
+				Objeto objetoFraccionado = new Objeto(); // Crear un nuevo objeto fraccionado
+				objetoFraccionado.setId(objetos[i].getId());
+				objetoFraccionado.setCantidad(objetos[i].getCantidad());
+				objetoFraccionado.setPeso(pesoMaximo);
+				pesoMaximo -= pesoMaximo; // Actualizar el peso restante de la mochila
+				objetoFraccionado.setValor(valorFraccionado); // Establecer el valor fraccionado
+				valorTotal += valorFraccionado; // Actualizar el valor total
+				mochila[i] = objetoFraccionado; // Añadir objeto fraccionado a la mochila
+			} else {
+				pesoMaximo -= objetos[i].getPeso(); // Actualizar el peso restante
+				valorTotal += objetos[i].getValor(); // Actualizar el valor total
+				mochila[i] = objetos[i]; // Añadir objeto completo a la mochila
+			}
+		}
+
+		System.out.println("Valor total = " + valorTotal); // Imprimir el valor total de los objetos seleccionados
+		return mochila; // Devolver la mochila con los objetos seleccionados
 	}
 
 	/**
-	 * Calcula el valor máximo que se puede obtener en la mochila fraccionaria. Se
-	 * ordenan los ítems en función de su valor por peso y se seleccionan hasta que
-	 * se alcance la capacidad de la mochila.
-	 *
-	 * @param items     Arreglo de ítems disponibles.
-	 * @param capacidad Capacidad máxima de la mochila.
-	 * @return El valor total máximo que se puede obtener.
+	 * Selecciona los objetos más ligeros hasta alcanzar el peso máximo permitido.
+	 * 
+	 * @param objetos    Arreglo de objetos disponibles.
+	 * @param pesoMaximo Peso máximo que puede soportar la mochila.
+	 * @return Arreglo de objetos seleccionados en la mochila.
+	 * 
+	 *         Complejidad: O(n^2), debido al algoritmo de ordenación (burbuja).
 	 */
-	public static double mochilaFraccionaria(Item[] items, double capacidad) {
-		// Ordenar los ítems por valor/ peso en orden descendente (burbuja)
-		for (int i = 0; i < items.length - 1; i++) {
-			for (int j = 0; j < items.length - i - 1; j++) {
-				double valorItemActual = items[j].getValor() / items[j].getPeso();
-				double valorItemSiguiente = items[j + 1].getValor() / items[j + 1].getPeso();
-				if (valorItemActual < valorItemSiguiente) {
-					// Intercambiar ítems si están en el orden incorrecto.
-					Item itemActual = items[j];
-					items[j] = items[j + 1];
-					items[j + 1] = itemActual;
+	public static Objeto[] agregarContainerMinPeso(Objeto[] objetos, int pesoMaximo) {
+		Objeto[] mochila = new Objeto[objetos.length]; // Array para almacenar los objetos seleccionados
+		int valorTotal = 0; // Variable para almacenar el valor total de los objetos seleccionados
+
+		// Ordenar los objetos por peso (burbuja)
+		for (int i = 0; i < objetos.length - 1; i++) {
+			for (int j = 0; j < objetos.length - i - 1; j++) {
+				if (objetos[j].getPeso() > objetos[j + 1].getPeso()) {
+					Objeto temp = objetos[j]; // Intercambio de objetos para ordenar
+					objetos[j] = objetos[j + 1];
+					objetos[j + 1] = temp;
 				}
 			}
 		}
 
-		double valorTotal = 0; // Valor total acumulado.
-		double espacioDisponible = capacidad; // Espacio restante en la mochila.
+		// Seleccionar objetos hasta alcanzar el peso máximo
+		for (int i = 0; i < objetos.length && pesoMaximo > 0; i++) {
+			if (objetos[i].getPeso() > pesoMaximo) {
+				double fraccion = (double) pesoMaximo / objetos[i].getPeso(); // Calcular la fracción del objeto que se
+																				// puede añadir
+				int valorFraccionado = (int) (objetos[i].getValor() * fraccion); // Calcular el valor de la fracción del
+																					// objeto
+				Objeto objetoFraccionado = new Objeto(); // Crear un nuevo objeto fraccionado
+				objetoFraccionado.setId(objetos[i].getId());
+				objetoFraccionado.setCantidad(objetos[i].getCantidad());
+				objetoFraccionado.setPeso(pesoMaximo);
+				pesoMaximo -= pesoMaximo; // Actualizar el peso restante de la mochila
+				objetoFraccionado.setValor(valorFraccionado); // Establecer el valor fraccionado
+				valorTotal += valorFraccionado; // Actualizar el valor total
+				mochila[i] = objetoFraccionado; // Añadir objeto fraccionado a la mochila
+			} else {
+				pesoMaximo -= objetos[i].getPeso(); // Actualizar el peso restante
+				valorTotal += objetos[i].getValor(); // Actualizar el valor total
+				mochila[i] = objetos[i]; // Añadir objeto completo a la mochila
+			}
+		}
 
-		// Seleccionar ítems hasta que no haya más espacio o ítems disponibles.
-		for (int i = 0; i < items.length; i++) {
-			while (items[i].getCantidad() > 0 && espacioDisponible > 0) {
-				if (items[i].getPeso() <= espacioDisponible) {
-					valorTotal += items[i].getValor(); // Añadir el valor completo.
-					espacioDisponible -= items[i].getPeso(); // Reducir el espacio disponible.
-					items[i].setCantidad(items[i].getCantidad() - 1); // Reducir cantidad disponible.
-				} else {
-					// Añadir el valor proporcional al espacio que queda.
-					valorTotal += (espacioDisponible / items[i].getPeso()) * items[i].getValor();
-					espacioDisponible -= (espacioDisponible / items[i].getPeso()) * items[i].getPeso();
-					items[i].setCantidad(items[i].getCantidad() - 1); // Reducir cantidad disponible.
+		System.out.println("Valor total = " + valorTotal); // Imprimir el valor total de los objetos seleccionados
+		return mochila; // Devolver la mochila con los objetos seleccionados
+	}
+
+	/**
+	 * Selecciona los objetos con el mayor valor por unidad de peso hasta alcanzar
+	 * el peso máximo permitido.
+	 * 
+	 * @param objetos    Arreglo de objetos disponibles.
+	 * @param pesoMaximo Peso máximo que puede soportar la mochila.
+	 * @return Arreglo de objetos seleccionados en la mochila.
+	 * 
+	 *         Complejidad: O(n^2), debido al algoritmo de ordenación (burbuja).
+	 */
+	public static Objeto[] agregarContainerValorUnidadPeso(Objeto[] objetos, int pesoMaximo) {
+		Objeto[] mochila = new Objeto[objetos.length]; // Array para almacenar los objetos seleccionados
+		int valorTotal = 0; // Variable para almacenar el valor total de los objetos seleccionados
+
+		// Ordenar los objetos por valor por unidad de peso (burbuja)
+		for (int i = 0; i < objetos.length - 1; i++) {
+			for (int j = 0; j < objetos.length - i - 1; j++) {
+				if ((double) objetos[j].getValor() / objetos[j].getPeso() < (double) objetos[j + 1].getValor()
+						/ objetos[j + 1].getPeso()) {
+					Objeto temp = objetos[j]; // Intercambio de objetos para ordenar
+					objetos[j] = objetos[j + 1];
+					objetos[j + 1] = temp;
 				}
 			}
 		}
-		return valorTotal; // Retornar el valor total acumulado.
+
+		// Seleccionar objetos hasta alcanzar el peso máximo
+		for (int i = 0; i < objetos.length && pesoMaximo > 0; i++) {
+			if (objetos[i].getPeso() > pesoMaximo) {
+				double fraccion = (double) pesoMaximo / objetos[i].getPeso(); // Calcular la fracción del objeto que se
+																				// puede añadir
+				int valorFraccionado = (int) (objetos[i].getValor() * fraccion); // Calcular el valor de la fracción del
+																					// objeto
+				Objeto objetoFraccionado = new Objeto(); // Crear un nuevo objeto fraccionado
+				objetoFraccionado.setId(objetos[i].getId());
+				objetoFraccionado.setCantidad(objetos[i].getCantidad());
+				objetoFraccionado.setPeso(pesoMaximo);
+				pesoMaximo -= pesoMaximo; // Actualizar el peso restante de la mochila
+				objetoFraccionado.setValor(valorFraccionado); // Establecer el valor fraccionado
+				valorTotal += valorFraccionado; // Actualizar el valor total
+				mochila[i] = objetoFraccionado; // Añadir objeto fraccionado a la mochila
+			} else {
+				pesoMaximo -= objetos[i].getPeso(); // Actualizar el peso restante
+				valorTotal += objetos[i].getValor(); // Actualizar el valor total
+				mochila[i] = objetos[i]; // Añadir objeto completo a la mochila
+			}
+		}
+
+		System.out.println("Valor total = " + valorTotal); // Imprimir el valor total de los objetos seleccionados
+		return mochila; // Devolver la mochila con los objetos seleccionados
+	}
+
+	/**
+	 * Método principal para probar las funcionalidades de la mochila.
+	 * 
+	 * @param args Argumentos de línea de comandos.
+	 */
+	public static void main(String[] args) {
+		Objeto[] objetos = { new Objeto(3, 210, 15), new Objeto(2, 230, 50), new Objeto(4, 150, 20),
+				new Objeto(5, 40, 55), new Objeto(3, 80, 92) };
+
+		int pesoMaximo = 520; // Peso máximo que puede soportar la mochila
+
+		// Prueba de agregarContainerMaxValor
+		System.out.println("Heurística 1: Seleccionar el objeto más valioso");
+		Objeto[] mochilaMaxValor = agregarContainerMaxValor(objetos, pesoMaximo);
+		for (Objeto obj : mochilaMaxValor) {
+			if (obj != null) {
+				System.out.println(obj);
+			}
+		}
+
+		// Prueba de agregarContainerMinPeso
+		System.out.println("\nHeurística 2: Seleccionar el objeto más ligero");
+		Objeto[] mochilaMinPeso = agregarContainerMinPeso(objetos, pesoMaximo);
+		for (Objeto obj : mochilaMinPeso) {
+			if (obj != null) {
+				System.out.println(obj);
+			}
+		}
+
+		// Prueba de agregarContainerValorUnidadPeso
+		System.out.println("\nHeurística 3: Seleccionar el objeto cuyo valor por unidad de peso sea el mayor posible");
+		Objeto[] mochilaValorUnidadPeso = agregarContainerValorUnidadPeso(objetos, pesoMaximo);
+		for (Objeto obj : mochilaValorUnidadPeso) {
+			if (obj != null) {
+				System.out.println(obj);
+			}
+		}
 	}
 }
 
